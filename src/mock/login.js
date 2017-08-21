@@ -4,23 +4,23 @@ const userMap = {
   admin: {
     role: ['admin'],
     token: 'admin',
-    introduction: '我是超级管理员',
+    introduction: '我是管理员',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Super Admin'
+    name: 'Admin'
   },
-  editor: {
-    role: ['editor'],
-    token: 'editor',
-    introduction: '我是编辑',
+  organizer: {
+    role: ['organizer'],
+    token: 'organizer',
+    introduction: '我是主管单位',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Normal Editor'
+    name: 'Organizer'
   },
-  developer: {
-    role: ['develop'],
-    token: 'develop',
-    introduction: '我是开发',
+  user: {
+    role: ['user'],
+    token: 'user',
+    introduction: '我是事业单位',
     avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: '工程师小王'
+    name: 'User'
   }
 }
 

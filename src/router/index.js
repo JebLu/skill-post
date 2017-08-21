@@ -38,15 +38,52 @@ export default new Router({
 
 export const asyncRouterMap = [
   {
+    path: '/org',
+    component: Layout,
+    redirct: '/noredirect',
+    name: '基础资料',
+    icon: 'base',
+    meta: { role: ['admin', 'organizer'] },
+    children: [{ path: 'index', component: _import('permission/index'), name: '组织机构', meta: { role: ['admin', 'organizer'] } }]
+  },
+  {
+    path: '/org',
+    component: Layout,
+    redirct: '/noredirect',
+    name: '信息管理',
+    icon: 'info',
+    meta: { role: ['admin', 'organizer', 'user'] },
+    children: [
+      { path: 'index', component: _import('permission/index'), name: '岗位信息', meta: { role: ['admin', 'organizer'] } },
+      { path: 'tinymce', component: _import('components/tinymce'), name: '人员信息', meta: { role: ['admin', 'organizer', 'user'] } }
+    ]
+  },
+  {
+    path: '/org',
+    component: Layout,
+    redirct: '/noredirect',
+    name: '统计查询',
+    icon: 'report',
+    meta: { role: ['admin', 'organizer', 'user'] },
+    children: [{ path: 'index', component: _import('permission/index'), name: '信息查询', meta: { role: ['admin', 'organizer', 'user'] } }]
+  },
+  {
+    path: '/org',
+    component: Layout,
+    redirct: '/noredirect',
+    name: '系统管理',
+    icon: 'sys',
+    meta: { role: ['admin'] },
+    children: [{ path: 'index', component: _import('permission/index'), name: '用户管理', meta: { role: ['admin'] } }]
+  },
+  {
     path: '/permission',
     component: Layout,
     redirect: '/permission/index',
     name: '权限测试',
     icon: 'quanxian',
-    meta: { role: ['admin'] },
     noDropdown: true,
-    hidden: true,
-    children: [{ path: 'index', component: _import('permission/index'), name: '权限测试页', meta: { role: ['admin'] } }]
+    children: [{ path: 'index', component: _import('permission/index'), name: '权限测试页' }]
   },
   {
     path: '/components',
@@ -152,6 +189,7 @@ export const asyncRouterMap = [
     name: 'theme',
     icon: 'theme',
     noDropdown: true,
+    hidden: true,
     children: [{ path: 'index', component: _import('theme/index'), name: '换肤' }]
   },
 
