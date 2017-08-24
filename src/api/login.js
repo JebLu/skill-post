@@ -1,12 +1,12 @@
 import fetch from 'utils/fetch';
 
-export function loginByEmail(email, password) {
+export function login(username, password) {
   const data = {
-    email,
+    username,
     password
   };
   return fetch({
-    url: '/login/loginbyemail',
+    url: '/SP/loginData',
     method: 'post',
     data
   });
@@ -21,7 +21,7 @@ export function logout() {
 
 export function getInfo(token) {
   return fetch({
-    url: '/user/info',
+    url: '/SP/sys/user/getUserById',
     method: 'get',
     params: { token }
   });

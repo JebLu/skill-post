@@ -1,14 +1,15 @@
 <template>
   <div class="login-container">
+
     <el-form autoComplete="on" :model="loginForm" :rules="loginRules" ref="loginForm" label-position="left" label-width="0px"
       class="card-box login-form">
-      <h3 class="title">系统登录</h3>
-      <el-form-item prop="email">
-        <span class="svg-container"><icon-svg icon-class="jiedianyoujian"></icon-svg></span>
-        <el-input name="email" type="text" v-model="loginForm.email" autoComplete="on" placeholder="邮箱"></el-input>
+      <h3 class="title">慈溪市事业单位专技岗位聘任管理系统</h3>
+      <el-form-item prop="username">
+        <span class="svg-container"><icon-svg icon-class="username"></icon-svg></span>
+        <el-input name="username" type="text" v-model="loginForm.username" autoComplete="on" placeholder="用户名"></el-input>
       </el-form-item>
       <el-form-item prop="password">
-        <span class="svg-container"><icon-svg icon-class="mima"></icon-svg></span>
+        <span class="svg-container"><icon-svg icon-class="pwd"></icon-svg></span>
         <el-input name="password" type="password" @keyup.enter.native="handleLogin" v-model="loginForm.password" autoComplete="on"
           placeholder="密码"></el-input>
       </el-form-item>
@@ -17,55 +18,43 @@
           登录
         </el-button>
       </el-form-item>
-      <div class='tips'>admin账号为:admin@wallstreetcn.com 密码随便填</div>
-      <div class='tips'>editor账号:editor@wallstreetcn.com 密码随便填</div>
     </el-form>
-
-    <el-dialog title="第三方验证" :visible.sync="showDialog">
-      邮箱登录成功,请选择第三方验证
-      <social-sign></social-sign>
-    </el-dialog>
-
   </div>
 </template>
 
 <script>
-  import { isWscnEmail } from 'utils/validate';
-  import socialSign from './socialsignin';
 
   export default {
-    components: { socialSign },
     name: 'login',
     data() {
-      const validateEmail = (rule, value, callback) => {
-        if (!isWscnEmail(value)) {
-          callback(new Error('请输入正确的合法邮箱'));
+       const validateName = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('用户名不能为空'));
         } else {
           callback();
         }
       };
       const validatePass = (rule, value, callback) => {
-        if (value.length < 6) {
-          callback(new Error('密码不能小于6位'));
+        if (value === '') {
+          callback(new Error('密码不能为空'));
         } else {
           callback();
         }
       };
       return {
         loginForm: {
-          email: 'admin@wallstreetcn.com',
+          username: '',
           password: ''
         },
         loginRules: {
-          email: [
-                { required: true, trigger: 'blur', validator: validateEmail }
+          username: [
+                { required: true, trigger: 'blur', validator: validateName}
           ],
           password: [
                 { required: true, trigger: 'blur', validator: validatePass }
           ]
         },
-        loading: false,
-        showDialog: false
+        loading: false
       }
     },
     methods: {
@@ -73,10 +62,9 @@
         this.$refs.loginForm.validate(valid => {
           if (valid) {
             this.loading = true;
-            this.$store.dispatch('LoginByEmail', this.loginForm).then(() => {
+            this.$store.dispatch('Login', this.loginForm).then(() => {
               this.loading = false;
               this.$router.push({ path: '/' });
-                // this.showDialog = true;
             }).catch(() => {
               this.loading = false;
             });
@@ -85,31 +73,7 @@
             return false;
           }
         });
-      },
-      afterQRScan() {
-          // const hash = window.location.hash.slice(1);
-          // const hashObj = getQueryObject(hash);
-          // const originUrl = window.location.origin;
-          // history.replaceState({}, '', originUrl);
-          // const codeMap = {
-          //   wechat: 'code',
-          //   tencent: 'code'
-          // };
-          // const codeName = hashObj[codeMap[this.auth_type]];
-          // if (!codeName) {
-          //   alert('第三方登录失败');
-          // } else {
-          //   this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-          //     this.$router.push({ path: '/' });
-          //   });
-          // }
       }
-    },
-    created() {
-        // window.addEventListener('hashchange', this.afterQRScan);
-    },
-    destroyed() {
-        // window.removeEventListener('hashchange', this.afterQRScan);
     }
   }
 </script>
@@ -160,7 +124,7 @@
       position: absolute;
       left: 0;
       right: 0;
-      width: 400px;
+      width: 700px;
       padding: 35px 35px 15px 35px;
       margin: 120px auto;
     }
@@ -168,6 +132,8 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       background: rgba(0, 0, 0, 0.1);
       border-radius: 5px;
+      width: 350px;
+      margin: 0px auto 25px auto;
       color: #454545;
     }
     .forget-pwd {
