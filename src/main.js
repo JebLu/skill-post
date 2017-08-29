@@ -33,13 +33,6 @@ Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 });
 
-// permissiom judge
-function hasPermission(roles, permissionRoles) {
-  if (roles.indexOf('admin') >= 0) return true; // admin权限 直接通过
-  if (!permissionRoles) return true;
-  return roles.some(role => permissionRoles.indexOf(role) >= 0)
-}
-
 // register global progress.
 const whiteList = ['/login', '/authredirect', '/reset', '/sendpwd'];// 不重定向白名单
 router.beforeEach((to, from, next) => {
@@ -48,6 +41,7 @@ router.beforeEach((to, from, next) => {
     if (to.path === '/login') {
       next({ path: '/' });
     } else {
+      console.log(store.getters.roles)
       if (store.getters.roles.length === 0) { // 判断当前用户是否已拉取完user_info信息
         store.dispatch('GetInfo').then(res => { // 拉取user_info
           const roles = [res.data.nameen];
@@ -61,13 +55,7 @@ router.beforeEach((to, from, next) => {
           })
         })
       } else {
-        // 没有动态改变权限的需求可直接next() 删除下方权限判断 ↓
-        if (hasPermission(store.getters.roles, to.meta.role)) {
-          next();//
-        } else {
-          next({ path: '/401', query: { noGoBack: true } });
-        }
-        // 可删 ↑
+        next();
       }
     }
   } else {

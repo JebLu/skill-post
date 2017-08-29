@@ -61,16 +61,13 @@ const user = {
       const username = userInfo.username.trim();
       return new Promise((resolve, reject) => {
         login(username, userInfo.password).then(response => {
-/*           console.log(response); */
           if (response.data.status === '0') {
 /*             alert(response.data.msg); */
             const data = response.data;
             setToken(response.data.user.id);
             commit('SET_TOKEN', data.user.id);
-          } else {
-            alert(response.data.msg);
           }
-          resolve();
+          resolve(response);
         }).catch(error => {
           reject(error);
         });
@@ -121,18 +118,6 @@ const user = {
         removeToken();
         resolve();
       });
-    },
-
-    // 动态修改权限
-    ChangeRole({
-      commit
-    }, role) {
-      return new Promise(resolve => {
-        commit('SET_ROLES', [role]);
-        commit('SET_TOKEN', role);
-        setToken(role);
-        resolve();
-      })
     }
   }
 };
