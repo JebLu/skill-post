@@ -17,13 +17,21 @@ const user = {
     name: '',
     avatar: '',
     introduction: '',
+    orgid:'',
     roles: [],
+    roleid:'',
     setting: {
       articlePlatform: []
     }
   },
 
   mutations: {
+    SET_ORGID: (state, orgid) => {
+      state.orgid = orgid;
+    },
+    SET_ROLEID: (state, roleid) => {
+      state.roleid = roleid;
+    },
     SET_TOKEN: (state, token) => {
       state.token = token;
     },
@@ -85,6 +93,8 @@ const user = {
           const roles = [data.nameen];
           commit('SET_ROLES', roles);
           commit('SET_NAME', data.name);
+          commit('SET_ORGID', data.orgid);
+          commit('SET_ROLEID', data.roleid);
           resolve(response);
         }).catch(error => {
           reject(error);
