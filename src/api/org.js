@@ -12,12 +12,23 @@ export function getTree(parentid,flag) {
   });
 }
 
-export function addTree(org) {
+export function saveTree(org) {
   const data = {
     org
   };
   return fetch({
-    url: '/SP/sys/org/addTree',
+    url: '/SP/sys/org/saveTree',
+    method: 'post',
+    data
+  });
+}
+
+export function delTree(id) {
+  const data = {
+    id
+  };
+  return fetch({
+    url: '/SP/sys/org/delTree',
     method: 'post',
     data
   });

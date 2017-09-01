@@ -1,20 +1,11 @@
 <template>
   <div class="kz-tree__wrapper">
-    <el-tree ref="kzTree"
-    :data="treeData"
-    :props="data.defaultProps"
-    lazy
-    :load="loadTreeNode"
-    @node-click="handleNodeClick"
-    highlight-current
-    default-expand-all
-    :render-content="nodeRender"
-    class="kz-tree">
+    <el-tree ref="kzTree" :data="treeData" lazy :load="loadTreeNode" highlight-current default-expand-all :render-content="nodeRender" class="kz-tree">
     </el-tree>
     <!--dialog-->
     <el-dialog :title="dialog.title" v-model="dialog.visible" :close-on-click-modal="false">
       <el-form :model="dialog.form" ref="dialogForm" :rules="dialog.rules" class="el-col-offset-1">
-        <el-form-item label="分类名称" prop="name" label-width="120" required>
+        <el-form-item label="单位名称" prop="name" label-width="120" required>
           <el-input v-model="dialog.form.name" auto-complete="off" class="el-col-12"></el-input>
         </el-form-item>
       </el-form>
@@ -30,30 +21,6 @@
 import { mapGetters } from 'vuex';
 export default {
   name: 'kz-tree',
-  props: {
-    data: {
-      type: Object,
-      required: true,
-      default() {
-        return {
-          // 默认tree-node的字段名
-          defaultProps: {
-            children: 'children',
-            label: 'name',
-            isLeaf: 'isLeaf'
-          },
-          // 异步ajax地址
-          // CURD
-          url: {
-            C: '',
-            U: '',
-            R: '',
-            D: ''
-          }
-        }
-      }
-    }
-  },
   data() {
     // 声明保存当前操作分类node对象
     this.__currentNode = null
@@ -100,64 +67,16 @@ export default {
 
       });
     },
-    /* 点击响应时间 */
-    handleNodeClick(...args) {
-      this.$emit('node-click', ...args)
-    },
     /* 构建分类title及工具 */
     nodeRender(h, { _self, node, data }) {
       // @todo: 使用jsx插件更好理解
-      const childrenNodes = data.parent_id >1 ? [
+      const childrenNodes = node.id === 1 ? [
         h('span', data.name),
         h('span',
           {
             'class': 'kz-tree-bar'
           },
           [
-            // 编辑
-            h('i', {
-              'class': 'el-icon-edit',
-              on: {
-                click: function(event) {
-                  event.stopPropagation()
-                  typeof _self.treeEdit === 'function' && _self.treeEdit(data, event, node)
-                }
-              }
-            }),
-            // 删除
-            h('i', {
-              'class': 'el-icon-close',
-              props: {
-                'v-popover': 'delTreeConfirm'
-              },
-              on: {
-                click: function(event) {
-                  event.stopPropagation()
-                  typeof _self.treeDelete === 'function' && _self.treeDelete(data, event, node)
-                }
-              }
-            })
-          ]
-        )
-      ]
-      :
-      [
-        h('span', data.name),
-        h('span',
-          {
-            'class': 'kz-tree-bar'
-          },
-          [
-            // 编辑
-            h('i', {
-              'class': 'el-icon-edit',
-              on: {
-                click: function(event) {
-                  event.stopPropagation()
-                  typeof _self.treeEdit === 'function' && _self.treeEdit(data, event, node)
-                }
-              }
-            }),
             // 添加
             h('i', {
               'class': 'el-icon-plus',
@@ -167,23 +86,54 @@ export default {
                   typeof _self.treeAdd === 'function' && _self.treeAdd(data, event, node)
                 }
               }
-            }),
-            // 删除
-            h('i', {
-              'class': 'el-icon-close',
-              props: {
-                'v-popover': 'delTreeConfirm'
-              },
-              on: {
-                click: function(event) {
-                  event.stopPropagation()
-                  typeof _self.treeDelete === 'function' && _self.treeDelete(data, event, node)
-                }
-              }
             })
           ]
         )
       ]
+        :
+        [
+          h('span', data.name),
+          h('span',
+            {
+              'class': 'kz-tree-bar'
+            },
+            [
+              // 编辑
+              h('i', {
+                'class': 'el-icon-edit',
+                on: {
+                  click: function(event) {
+                    event.stopPropagation()
+                    typeof _self.treeEdit === 'function' && _self.treeEdit(data, event, node)
+                  }
+                }
+              }),
+              // 添加
+              h('i', {
+                'class': 'el-icon-plus',
+                on: {
+                  click: function(event) {
+                    event.stopPropagation()
+                    typeof _self.treeAdd === 'function' && _self.treeAdd(data, event, node)
+                  }
+                }
+              }),
+              // 删除
+              h('i', {
+                'class': 'el-icon-close',
+                props: {
+                  'v-popover': 'delTreeConfirm'
+                },
+                on: {
+                  click: function(event) {
+                    event.stopPropagation()
+                    typeof _self.treeDelete === 'function' && _self.treeDelete(data, event, node)
+                  }
+                }
+              })
+            ]
+          )
+        ]
       return h(
         'div',
         {
@@ -224,52 +174,29 @@ export default {
     /* 删除 */
     treeDelete(treeItem, event, node) {
       const fetchDelOk = () => {
-        // ajax
-        const url = this.data.url.D
-        this.fetch(url, { id: treeItem.id }, 'post').then(data => {
-          // 使用实例对象的removeChild方法
-          // hack
-          // https://github.com/ElemeFE/element/blob/dev/packages/tree/src/model/node.js#L187
-          try {
-            node.parent.removeChild(node)
-          } catch (err) { console.error(err) }
-          // 提示结果
-          this.$notify({ message: '删除成功', type: 'success' })
-        })
+        this.$store.dispatch("DelTree", { id: treeItem.id }).then(res => {
+          if (res.data.status === '0') {
+            try {
+              node.parent.removeChild(node)
+            } catch (err) { console.error(err) }
+            this.$notify({ message: '删除成功', type: 'success' })
+          }
+          else {
+            this.$notify.error({
+              title: '错误',
+              message: '删除失败'
+            });
+          }
+        }).catch({
+
+        });
       }
       // 询问提示
-      this.$confirm('是否删除此分类?', '提示', {
+      this.$confirm('是否删除此单位以及此单位的下级单位?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(fetchDelOk).catch(e => e)
-    },
-    /* ajax封装 */
-    fetch(url, data, type = 'GET') {
-      const success = (data, resolve, reject) => {
-        if (data.status === 1) {
-          resolve(data.data)
-        } else {
-          console.error(`${data.code}: ${data.message}`)
-          reject(data)
-        }
-      }
-      return new Promise((resolve, reject) => {
-        if (type.toLowerCase() === 'post') {
-          this.$http.post(url, data)
-            .then(res => res.json())
-            .then(data => success(data, resolve, reject))
-        } else {
-          if (data) {
-            const dataUrl = Object.keys(data).map(item => `${item}=${data[item]}`)
-            url = url + (url.indexOf('?') > -1 ? '' : '?') + dataUrl.join('&')
-          }
-
-          this.$http.get(url)
-            .then(res => res.json())
-            .then(data => success(data, resolve, reject))
-        }
-      })
     },
     /* ######## */
     /* 其他 */
@@ -288,26 +215,25 @@ export default {
     },
     fetchAddTreeNode() {
       this.dialog.submiting = true
-      this.$store.dispatch("AddTree", this.dialog.form).then(data => {
+      this.$store.dispatch("SaveTree", this.dialog.form).then(data => {
         /* 隐藏dialog */
-          Object.assign(this.dialog, {
-            submiting: false,
-            visible: false
-          })
-          this.$refs.dialogForm.resetFields()
-          /* 提示结果 */
-          const message = this.dialog.form.id ? '编辑成功' : '添加成功'
-          this.$message({ message: message, type: 'success' })
+        Object.assign(this.dialog, {
+          submiting: false,
+          visible: false
+        })
+        this.$refs.dialogForm.resetFields()
+        /* 提示结果 */
+        const message = this.dialog.form.id ? '修改成功' : '添加成功'
+        this.$message({ message: message, type: 'success' })
 
-          console.log(data);
-          if (this.dialog.form.id) { // 编辑
-            this.__currentNode && this.$set(this.__currentNode, 'data', data)
-          } else { // 新增
-            /* treeNode api */
-            if (this.__currentNode) { // 子分类添加子类
-              this.__currentNode.doCreateChildren([data.data])
-            }
+        if (this.dialog.form.id) { // 编辑
+          this.__currentNode && this.$set(this.__currentNode, 'data', data.data)
+        } else { // 新增
+          /* treeNode api */
+          if (this.__currentNode) { // 子分类添加子类
+            this.__currentNode.doCreateChildren([data.data])
           }
+        }
       }).catch({
 
       });

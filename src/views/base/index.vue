@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <kz-tree :data="tree" @node-click="hanldeNodeClick"></kz-tree>
+    <kz-tree></kz-tree>
   </div>
 </template>
 
@@ -12,25 +12,6 @@ export default {
   name: 'app',
   components: {
     kzTree: require('./tree.vue')
-  },
-  data () {
-    return {
-      content: 'TreeManager',
-      tree: {
-        url: {
-          C: '/api/tree/add',
-          U: '/api/tree/update',
-          R: '/api/tree/list',
-          D: '/api/tree/delete'
-        }
-      }
-    }
-  },
-  methods: {
-    hanldeNodeClick (data) {
-/*       console.log(data) */
-      this.content = data.name
-    }
   }
 }
 </script>
@@ -53,12 +34,5 @@ html,body {
 }
 .el-tree {
   border: none;
-}
-.copyright {
-  position: absolute;
-  bottom: 20px;
-  right: 0;
-  left: 0;
-  text-align: center;
 }
 </style>

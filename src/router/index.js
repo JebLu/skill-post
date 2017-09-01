@@ -44,7 +44,7 @@ export const asyncRouterMap = [
     name: '基础资料',
     icon: 'base',
     meta: { role: ['admin', 'organizer'] },
-    children: [{ path: 'index', component: _import('base/index'), name: '组织机构', meta: { role: ['admin', 'organizer'] } }]
+    children: [{ path: 'index', component: _import('base/index'), name: '单位管理', meta: { role: ['admin', 'organizer'] } }]
   },
   {
     path: '/org',
